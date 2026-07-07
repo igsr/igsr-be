@@ -104,7 +104,7 @@ def _compute_export_caps(
     requested_size = payload.get("size")
     if not isinstance(requested_size, int) or requested_size <= 0:
         requested_size = size_cap
-    total_cap = size_cap
+    total_cap = min(requested_size, size_cap)
     batch_size = min(requested_size, es_batch_cap)
     return batch_size, total_cap
 
@@ -168,7 +168,7 @@ async def export_tsv_response(
     """
     # Parse payload
     payload: Dict[str, Any] = {}
-    if json_form is not None:
+    if json_form and json_form.strip():
         try:
             payload = json.loads(json_form)
         except Exception as e:
